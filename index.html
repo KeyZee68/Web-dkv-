@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XII DKV Manusaba - Web Kelas</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: {
+                        darkBg: '#0F1117',
+                        cardDark: '#1E293B',
+                        brandIndigo: '#6366F1',
+                        brandCyan: '#06B6D4'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkBg text-slate-100 font-sans min-h-screen pb-24">
+
+    <!-- Top Header -->
+    <header class="bg-cardDark/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brandIndigo to-brandCyan flex items-center justify-center font-bold text-white shadow-lg shadow-brandIndigo/30">
+                12
+            </div>
+            <div>
+                <h1 class="font-bold text-base leading-tight">XII DKV Manusaba</h1>
+                <p class="text-xs text-slate-400" id="user-status-label">Mode Tamu (Publik)</p>
+            </div>
+        </div>
+        <div id="auth-action-btn">
+            <button onclick="openLoginModal()" class="px-3 py-1.5 bg-brandIndigo hover:bg-brandIndigo/80 text-xs font-semibold rounded-lg transition shadow-md">
+                <i class="fa-solid fa-lock mr-1"></i> Login Chat
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-md mx-auto p-4">
+        
+        <!-- SECTION: BERANDA -->
+        <section id="sec-beranda" class="space-y-4 tab-section">
+            <div class="p-5 rounded-2xl bg-gradient-to-r from-brandIndigo/20 via-cardDark to-cardDark border border-brandIndigo/30 relative overflow-hidden">
+                <div class="relative z-10">
+                    <span class="px-2.5 py-1 bg-brandIndigo/30 text-brandCyan text-[10px] font-bold rounded-full uppercase tracking-wider">Official Class</span>
+                    <h2 class="text-xl font-bold mt-2">Selamat Datang di Portal XII DKV</h2>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">Pusat informasi jadwal, struktur, galeri, dan ruang diskusi aman warga kelas.</p>
+                </div>
+                <div class="absolute -right-4 -bottom-4 text-brandIndigo/10 text-8xl font-black pointer-events-none">DKV</div>
+            </div>
+
+            <!-- Quick Widget Today -->
+            <div class="grid grid-cols-2 gap-3">
+                <div onclick="switchTab('jadwal')" class="p-4 rounded-xl bg-cardDark border border-slate-800 hover:border-brandIndigo/50 transition cursor-pointer">
+                    <i class="fa-solid fa-calendar-days text-brandCyan text-lg mb-2"></i>
+                    <h3 class="font-semibold text-sm">Jadwal Hari Ini</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Cek mapel & piket</p>
+                </div>
+                <div onclick="switchTab('album')" class="p-4 rounded-xl bg-cardDark border border-slate-800 hover:border-brandIndigo/50 transition cursor-pointer">
+                    <i class="fa-solid fa-images text-brandIndigo text-lg mb-2"></i>
+                    <h3 class="font-semibold text-sm">Album Kelas</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Dokumentasi momen</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: JADWAL & STRUKTUR -->
+        <section id="sec-jadwal" class="space-y-4 tab-section hidden">
+            <div class="flex space-x-2 bg-cardDark p-1 rounded-xl border border-slate-800">
+                <button onclick="switchSubTab('piket')" id="btn-sub-piket" class="flex-1 py-2 text-xs font-semibold rounded-lg bg-brandIndigo text-white transition">Jadwal Piket</button>
+                <button onclick="switchSubTab('mapel')" id="btn-sub-mapel" class="flex-1 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">Jadwal Mapel</button>
+                <button onclick="switchSubTab('struktur')" id="btn-sub-struktur" class="flex-1 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">Struktur Kelas</button>
+            </div>
+
+            <!-- Sub Tab: Piket -->
+            <div id="sub-piket" class="space-y-3">
+                <h3 class="font-bold text-sm text-slate-300"><i class="fa-solid fa-broom text-brandCyan mr-2"></i>Jadwal Piket Harian</h3>
+                <div id="piket-list-container" class="space-y-3">
+                    <!-- Dynamic Rendered -->
+                </div>
+            </div>
+
+            <!-- Sub Tab: Mapel -->
+            <div id="sub-mapel" class="space-y-3 hidden">
+                <h3 class="font-bold text-sm text-slate-300"><i class="fa-solid fa-book text-brandIndigo mr-2"></i>Jadwal Mata Pelajaran</h3>
+                <div id="mapel-list-container" class="space-y-3">
+                    <!-- Dynamic Rendered -->
+                </div>
+            </div>
+
+            <!-- Sub Tab: Struktur Kelas -->
+            <div id="sub-struktur" class="space-y-3 hidden">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-sm text-slate-300"><i class="fa-solid fa-users text-brandCyan mr-2"></i>Struktur Pengurus Kelas</h3>
+                    <button id="admin-add-struct-btn" onclick="openAddStrukturModal()" class="hidden px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold rounded-lg transition">
+                        <i class="fa-solid fa-plus mr-1"></i> Tambah Pengurus
+                    </button>
+                </div>
+                <div id="struktur-list-container" class="space-y-2">
+                    <!-- Dynamic Rendered -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CHAT GLOBAL (Protected Login) -->
+        <section id="sec-chat" class="space-y-3 tab-section hidden">
+            <div id="chat-guard-box" class="p-6 rounded-2xl bg-cardDark border border-slate-800 text-center space-y-3">
+                <div class="w-12 h-12 bg-brandIndigo/20 text-brandIndigo rounded-full flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="font-bold text-base">Chat Global Terproteksi</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">Menu ini dikhususkan bagi siswa/i resmi kelas XII DKV Manusaba. Silakan login terlebih dahulu menggunakan kredensial kelas.</p>
+                <button onclick="openLoginModal()" class="w-full py-2.5 bg-brandIndigo hover:bg-brandIndigo/80 text-sm font-semibold rounded-xl transition shadow-lg shadow-brandIndigo/30">
+                    Masuk ke Chat Global
+                </button>
+            </div>
+
+            <div id="chat-room-box" class="hidden flex flex-col h-[70vh] bg-cardDark rounded-2xl border border-slate-800 overflow-hidden">
+                <!-- Chat Header -->
+                <div class="p-3 bg-slate-900/60 border-b border-slate-800 flex justify-between items-center text-xs">
+                    <span class="font-semibold text-emerald-400 flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 animate-pulse"></span> Chat Aktif (Auto-Delete 24 Jam)</span>
+                    <button onclick="logoutChat()" class="text-rose-400 hover:underline"><i class="fa-solid fa-right-from-bracket mr-1"></i>Keluar</button>
+                </div>
+                <!-- Message List -->
+                <div id="chat-messages-container" class="flex-1 p-3 overflow-y-auto space-y-3 text-xs flex flex-col-reverse">
+                    <!-- Messages populated here -->
+                </div>
+                <!-- Chat Input Form -->
+                <form id="chat-form" onsubmit="sendChatMessage(event)" class="p-3 bg-slate-900/60 border-t border-slate-800 flex gap-2">
+                    <input type="text" id="chat-input-text" placeholder="Tulis pesan diskusi..." maxlength="500" required class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-brandIndigo">
+                    <button type="submit" class="px-4 bg-brandIndigo hover:bg-brandIndigo/80 text-white rounded-xl transition"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION: ALBUM FOTO -->
+        <section id="sec-album" class="space-y-4 tab-section hidden">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-sm text-slate-300"><i class="fa-solid fa-camera-retro text-brandCyan mr-2"></i>Album Dokumentasi Kelas</h3>
+                <button id="admin-upload-btn" onclick="openUploadModal()" class="hidden px-3 py-1.5 bg-brandIndigo hover:bg-brandIndigo/80 text-xs font-semibold rounded-lg transition shadow-md">
+                    <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload Foto
+                </button>
+            </div>
+            <div id="album-grid-container" class="grid grid-cols-2 gap-3">
+                <!-- Dynamic Rendered -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-cardDark/90 backdrop-blur-md border-t border-slate-800 py-2 px-6 flex justify-around items-center z-40 max-w-md mx-auto">
+        <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center text-brandIndigo text-xs" data-target="beranda">
+            <i class="fa-solid fa-house text-base mb-0.5"></i>
+            <span>Beranda</span>
+        </button>
+        <button onclick="switchTab('jadwal')" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 text-xs" data-target="jadwal">
+            <i class="fa-solid fa-calendar-days text-base mb-0.5"></i>
+            <span>Jadwal</span>
+        </button>
+        <button onclick="switchTab('chat')" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 text-xs" data-target="chat">
+            <i class="fa-solid fa-comments text-base mb-0.5"></i>
+            <span>Chat</span>
+        </button>
+        <button onclick="switchTab('album')" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 text-xs" data-target="album">
+            <i class="fa-solid fa-images text-base mb-0.5"></i>
+            <span>Album</span>
+        </button>
+    </nav>
+
+    <!-- MODAL: LOGIN / AUTH -->
+    <div id="login-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardDark border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-slate-100">Login Chat Global Kelas</h3>
+                <button onclick="closeLoginModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Username / Nama Panggilan</label>
+                    <input type="text" id="login-username" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-brandIndigo">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Password</label>
+                    <input type="password" id="login-password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-brandIndigo">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Kode Token Kelas</label>
+                    <input type="password" id="login-token" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-brandIndigo" placeholder="Token khusus kelas XII DKV">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-brandIndigo hover:bg-brandIndigo/80 text-white font-semibold rounded-xl transition shadow-lg mt-2">
+                    Masuk Sesi Chat
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: TAMBAH STRUKTUR KELAS (Admin) -->
+    <div id="struktur-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardDark border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-slate-100">Tambah / Edit Pengurus</h3>
+                <button onclick="closeAddStrukturModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="saveStrukturKelas(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Jabatan / Posisi</label>
+                    <input type="text" id="struct-position" required placeholder="Cth: Ketua Kelas" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-brandIndigo">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Nama Siswa</label>
+                    <input type="text" id="struct-name" required placeholder="Cth: Siti" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-brandIndigo">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition shadow-lg mt-2">
+                    Simpan Data
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: UPLOAD FOTO ALBUM (Admin) -->
+    <div id="upload-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardDark border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-slate-100">Upload Foto Kelas</h3>
+                <button onclick="closeUploadModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleUploadPhoto(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Link URL Foto / Gambar</label>
+                    <input type="url" id="upload-url" required placeholder="https://images.unsplash.com/..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-brandIndigo">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Caption / Keterangan</label>
+                    <input type="text" id="upload-caption" required placeholder="Momen praktikum DKV..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-brandIndigo">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-brandIndigo hover:bg-brandIndigo/80 text-white font-semibold rounded-xl transition shadow-lg mt-2">
+                    Publikasikan Foto
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Modular CDN) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // === MASUKKAN KONFIGURASI FIREBASE ANDA DI SINI ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdy6bYkHDi1MF6EwqGKfXSWGkxzjKyQh0",
+            authDomain: "kelas-xii-dkv.firebaseapp.com",
+            projectId: "kelas-xii-dkv",
+            storageBucket: "kelas-xii-dkv.firebasestorage.app",
+            messagingSenderId: "39270409631",
+            appId: "1:39270409631:web:35cc880d9e064b02f049aa"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        window.db = db;
+        window.FirestoreTools = { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, getDocs };
+
+        // Inisialisasi Data Default Lokal/Cloud jika kosong
+        initAppModules();
+    </script>
+
+    <!-- App Logic Script -->
+    <script>
+        // Data Statis Sesuai Gambar Lampiran (Piket & Mapel)
+        const piketData = [
+            { hari: "Senin", anggota: ["Dinda", "Erick", "Icha", "Ismi", "Kharisma", "Mila"] },
+            { hari: "Selasa", anggota: ["Ajeng", "Andini", "Anggi", "Anis", "Ayu", "Bayu", "Diah"] },
+            { hari: "Rabu", anggota: ["Hanum", "Mutiara", "Naelun", "Fitri", "Aeni", "Puji"] },
+            { hari: "Kamis", anggota: ["Risma", "Anik", "Yuni", "Sela", "Seli", "Aisyah"] },
+            { hari: "Jumat", anggota: ["Sukma", "Tiara", "Tria", "Tiara r", "Vyta", "Windhi"] }
+        ];
+
+        const mapelData = [
+            { hari: "Senin", list: ["KIK", "B. Inggris", "DKV", "KIK"] },
+            { hari: "Selasa", list: ["B. Jawa", "DKV", "BK"] },
+            { hari: "Rabu", list: ["B. Korea", "Matematika", "BK", "B. Indonesia"] },
+            { hari: "Kamis", list: ["B. Inggris", "Pendidikan Pancasila", "PAI", "DKV"] },
+            { hari: "Jumat", list: ["DKV"] }
+        ];
+
+        let defaultStruktur = [
+            { id: "1", position: "Wali Kelas", studentName: "Pembina DKV" },
+            { id: "2", position: "Ketua Kelas", studentName: "Siti (Admin)" },
+            { id: "3", position: "Wakil Ketua", studentName: "Dinda" },
+            { id: "4", position: "Sekretaris", studentName: "Risma & Hanum" },
+            { id: "5", position: "Bendahara", studentName: "Ayu & Sukma" }
+        ];
+
+        let currentUser = null; // { name, role: 'admin'|'member' }
+
+        // Navigation Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-brandIndigo');
+                btn.classList.add('text-slate-400');
+                if(btn.dataset.target === tabId) {
+                    btn.classList.add('text-brandIndigo');
+                    btn.classList.remove('text-slate-400');
+                }
+            });
+            window.scrollTo(0, 0);
+        }
+
+        function switchSubTab(subId) {
+            ['piket', 'mapel', 'struktur'].forEach(id => {
+                document.getElementById(`sub-${id}`).classList.add('hidden');
+                document.getElementById(`btn-sub-${id}`).cla
